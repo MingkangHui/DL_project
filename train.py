@@ -24,7 +24,7 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
         optimizer = torch.optim.Adam(model.parameters())
     else:
        raise ValueError('Unknown optimization, please define by yourself')
-
+    accuracy_list = []
     max_acc = 0       
 
     for epoch in range(start_epoch,stop_epoch):
@@ -45,7 +45,9 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
         if (epoch % params.save_freq==0) or (epoch==stop_epoch-1):
             outfile = os.path.join(params.checkpoint_dir, '{:d}.tar'.format(epoch))
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
-        print(acc)
+        print('accuracy:',acc)
+        accuracy_list.append(acc)
+        print(accuracy_list)
     return model
 
 if __name__=='__main__':
