@@ -84,7 +84,7 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
         print('loss:', middle_loss)
         #print(accuracy_list)
         with open(f'{params.model}_loss.txt', 'a') as f:
-            f.write(middle_loss)
+            f.write(str(middle_loss))
 
     return model
 
