@@ -85,9 +85,9 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
         loss_list.append(middle_loss)
         #print(accuracy_list)
         print(loss_list)
-    f = open('loss.txt', 'w+')
-    f.write(loss_list)
-    f.close()
+        f = open('loss.txt', 'w+')
+        f.write(loss_list)
+        f.close()
     return model
 
 if __name__=='__main__':
