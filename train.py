@@ -25,6 +25,7 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
     else:
        raise ValueError('Unknown optimization, please define by yourself')
     accuracy_list = []
+    loss_list = []
     max_acc = 0
     # flag equals to False when not visited, it turned to True after acc reach certain value
     flag_25 = False
@@ -33,41 +34,60 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
 
     for epoch in range(start_epoch,stop_epoch):
         model.train()
-        model.train_loop(epoch, base_loader,  optimizer ) #model are called by reference, no need to return 
+        middle_loss = model.train_loop(epoch, base_loader,  optimizer ) #model are called by reference, no need to return
         model.eval()
 
         if not os.path.isdir(params.checkpoint_dir):
             os.makedirs(params.checkpoint_dir)
 
-        acc = model.test_loop( val_loader)
+        acc = model.test_loop(val_loader)
         if acc > max_acc : #for baseline and baseline++, we don't use validation in default and we let acc = -1, but we allow options to validate with DB index
             print("best model! save...")
             max_acc = acc
             outfile = os.path.join(params.checkpoint_dir, 'best_model.tar')
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
-        if acc > 0.25 and not flag_25:
-            print("acc reach 0.25! save...")
-            outfile = os.path.join(params.checkpoint_dir, '0.25_model.tar')
+        # if acc > 0.25 and not flag_25:
+        #     print("acc reach 0.25! save...")
+        #     outfile = os.path.join(params.checkpoint_dir, '0.25_model.tar')
+        #     torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
+        #     flag_25 = True
+        # if acc > 0.5 and not flag_50:
+        #     print("acc reach 0.50! save...")
+        #     outfile = os.path.join(params.checkpoint_dir, '0.50_model.tar')
+        #     torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
+        #     flag_50 = True
+        # if acc > 0.75 and not flag_75:
+        #     print("acc reach 0.75! save...")
+        #     outfile = os.path.join(params.checkpoint_dir, '0.75_model.tar')
+        #     torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
+        #     flag_75 = True
+        if epoch == 30:
+            print("30th epoch! save...")
+            outfile = os.path.join(params.checkpoint_dir, '30_model.tar')
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
-            flag_25 = True
-        if acc > 0.5 and not flag_50:
-            print("acc reach 0.50! save...")
-            outfile = os.path.join(params.checkpoint_dir, '0.50_model.tar')
+        if epoch == 50:
+            print("50th epoch! save...")
+            outfile = os.path.join(params.checkpoint_dir, '50_model.tar')
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
-            flag_50 = True
-        if acc > 0.75 and not flag_75:
-            print("acc reach 0.75! save...")
-            outfile = os.path.join(params.checkpoint_dir, '0.75_model.tar')
+        if epoch == 70:
+            print("70th epoch! save...")
+            outfile = os.path.join(params.checkpoint_dir, '70_model.tar')
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
-            flag_75 = True
+
 
         if (epoch % params.save_freq==0) or (epoch==stop_epoch-1):
             outfile = os.path.join(params.checkpoint_dir, '{:d}.tar'.format(epoch))
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
 
-        print('accuracy:',acc)
-        accuracy_list.append(acc)
-        print(accuracy_list)
+        # print('accuracy:', acc)
+        # accuracy_list.append(acc)
+        print('loss:', middle_loss)
+        loss_list.append(middle_loss)
+        #print(accuracy_list)
+        print(loss_list)
+    f = open('loss.txt', 'w+')
+    f.write(loss_list)
+    f.close()
     return model
 
 if __name__=='__main__':
