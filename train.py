@@ -25,7 +25,11 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
     else:
        raise ValueError('Unknown optimization, please define by yourself')
     accuracy_list = []
-    max_acc = 0       
+    max_acc = 0
+    # flag equals to False when not visited, it turned to True after acc reach certain value
+    flag_25 = False
+    flag_50 = False
+    flag_75 = False
 
     for epoch in range(start_epoch,stop_epoch):
         model.train()
@@ -41,10 +45,26 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
             max_acc = acc
             outfile = os.path.join(params.checkpoint_dir, 'best_model.tar')
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
+        if acc > 0.25 and not flag_25:
+            print("acc reach 0.25! save...")
+            outfile = os.path.join(params.checkpoint_dir, '0.25_model.tar')
+            torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
+            flag_25 = True
+        if acc > 0.5 and not flag_50:
+            print("acc reach 0.50! save...")
+            outfile = os.path.join(params.checkpoint_dir, '0.50_model.tar')
+            torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
+            flag_50 = True
+        if acc > 0.75 and not flag_75:
+            print("acc reach 0.75! save...")
+            outfile = os.path.join(params.checkpoint_dir, '0.75_model.tar')
+            torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
+            flag_75 = True
 
         if (epoch % params.save_freq==0) or (epoch==stop_epoch-1):
             outfile = os.path.join(params.checkpoint_dir, '{:d}.tar'.format(epoch))
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
+
         print('accuracy:',acc)
         accuracy_list.append(acc)
         print(accuracy_list)
