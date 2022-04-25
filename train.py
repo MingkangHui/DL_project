@@ -24,13 +24,13 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
         optimizer = torch.optim.Adam(model.parameters())
     else:
        raise ValueError('Unknown optimization, please define by yourself')
-    accuracy_list = []
-    loss_list = []
+    #accuracy_list = []
+    #loss_list = []
     max_acc = 0
     # flag equals to False when not visited, it turned to True after acc reach certain value
-    flag_25 = False
-    flag_50 = False
-    flag_75 = False
+    #flag_25 = False
+    #flag_50 = False
+    #flag_75 = False
 
     for epoch in range(start_epoch,stop_epoch):
         model.train()
@@ -82,12 +82,10 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
         # print('accuracy:', acc)
         # accuracy_list.append(acc)
         print('loss:', middle_loss)
-        loss_list.append(middle_loss)
         #print(accuracy_list)
-        print(loss_list)
-        f = open('loss.txt', 'w+')
-        f.write(loss_list)
-        f.close()
+        with open(f'{params.model}_loss.txt', 'a') as f:
+            f.write(middle_loss)
+
     return model
 
 if __name__=='__main__':
