@@ -124,6 +124,6 @@ if __name__ == '__main__':
     model.eval()
     print('outfile',outfile)
     dirname = os.path.dirname(outfile)
-    # if not os.path.isdir(dirname):
-    #     os.makedirs(dirname)
-    # save_features(model, data_loader, outfile)
+    if not os.path.isdir(dirname):
+        os.makedirs(dirname)
+    save_features(model, data_loader, outfile)
