@@ -87,9 +87,9 @@ if __name__ == '__main__':
     print('modelfile',modelfile)
 
     if params.save_iter != -1:
-        outfile = os.path.join( checkpoint_dir.replace("checkpoints","features"), split + "_" + str(params.save_iter)+ ".hdf5")
+        outfile = os.path.join( checkpoint_dir.replace("checkpoints","features"), split + "_" + str(params.save_iter)+ "_"+ str(acc) +".hdf5")
     else:
-        outfile = os.path.join( checkpoint_dir.replace("checkpoints","features"), split + ".hdf5")
+        outfile = os.path.join( checkpoint_dir.replace("checkpoints","features"), split + "_"+ str(acc) + ".hdf5")
 
     datamgr         = SimpleDataManager(image_size, batch_size = 64)
     print('loadfile',loadfile)
@@ -124,6 +124,6 @@ if __name__ == '__main__':
     model.eval()
     print('outfile',outfile)
     dirname = os.path.dirname(outfile)
-    # if not os.path.isdir(dirname):
-    #     os.makedirs(dirname)
-    # save_features(model, data_loader, outfile)
+    if not os.path.isdir(dirname):
+        os.makedirs(dirname)
+    save_features(model, data_loader, outfile)
