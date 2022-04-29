@@ -63,15 +63,15 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
         #     flag_75 = True
         if epoch == 30:
             print("30th epoch! save...")
-            outfile = os.path.join(params.checkpoint_dir, '30_model.tar')
+            outfile = os.path.join(params.checkpoint_dir, '30.tar')
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
         if epoch == 50:
             print("50th epoch! save...")
-            outfile = os.path.join(params.checkpoint_dir, '50_model.tar')
+            outfile = os.path.join(params.checkpoint_dir, '50.tar')
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
         if epoch == 70:
             print("70th epoch! save...")
-            outfile = os.path.join(params.checkpoint_dir, '70_model.tar')
+            outfile = os.path.join(params.checkpoint_dir, '70.tar')
             torch.save({'epoch':epoch, 'state':model.state_dict()}, outfile)
 
 
@@ -83,8 +83,8 @@ def train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch,
         # accuracy_list.append(acc)
         print('loss:', middle_loss)
         #print(accuracy_list)
-        print(f'{params.model}_{params.method}_loss.txt')
-        with open(f'{params.model}_{params.method}_loss.txt', 'a') as f:
+        print(f'{params.model}_{params.method}_{params.dataset}_loss.txt')
+        with open(f'{params.model}_{params.method}{params.dataset}__loss.txt', 'a') as f:
             f.write(str(middle_loss))
             f.write('\n')
 
