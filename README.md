@@ -1,4 +1,4 @@
-# A much more Closer Look at Few-shot Classification
+# A Much More Closer Look at Few-shot Classification
 
 This is based on the paper [A Closer Look at Few-shot Classification](https://arxiv.org/abs/1904.04232) in International Conference on Learning Representations (ICLR 2019). 
 In this project, we do testing on baseline and baseline++ to see the performace of ResNet10, ResNet 18 and ResNet34 on different tasks.
