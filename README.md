@@ -1,19 +1,9 @@
-# A Closer Look at Few-shot Classification
+# A much more Closer Look at Few-shot Classification
 
-This repo contains the reference source code for the paper [A Closer Look at Few-shot Classification](https://arxiv.org/abs/1904.04232) in International Conference on Learning Representations (ICLR 2019). In this project, we provide a integrated testbed for a detailed empirical study for few-shot classification.
+This is based on the paper [A Closer Look at Few-shot Classification](https://arxiv.org/abs/1904.04232) in International Conference on Learning Representations (ICLR 2019). 
+In this project, we do testing on baseline and baseline++ to see the performace of ResNet10, ResNet 18 and ResNet34 on different tasks.
 
-
-## Citation
-If you find our code useful, please consider citing our work using the bibtex:
-```
-@inproceedings{
-chen2019closerfewshot,
-title={A Closer Look at Few-shot Classification},
-author={Chen, Wei-Yu and Liu, Yen-Cheng and Kira, Zsolt and Wang, Yu-Chiang and  Huang, Jia-Bin},
-booktitle={International Conference on Learning Representations},
-year={2019}
-}
-```
+This project could do the process of downloading and preprocessing, training and model saving, and testing for different tasks.
 
 ## Enviroment
  - Python3
@@ -23,76 +13,65 @@ year={2019}
 ## Getting started
 ### CUB
 * Change directory to `./filelists/CUB`
-* run `source ./download_CUB.sh`
+* the download is deprecated so you need to download CUB dataset manually in `./filelists/CUB` 
+* run `source ./download_CUB.sh` to do later works
+
 
 ### mini-ImageNet
 * Change directory to `./filelists/miniImagenet`
-* run `source ./download_miniImagenet.sh` 
-
-(WARNING: This would download the 155G ImageNet dataset. You can comment out correponded line 5-6 in `download_miniImagenet.sh` if you already have one.) 
+* the download is deprecated so you need to download miniImagenet dataset manually in `./filelists/miniImagenet` 
+* run `source ./download_miniImagenet.sh` to do later works
 
 ### mini-ImageNet->CUB (cross)
 * Finish preparation for CUB and mini-ImageNet and you are done!
-
-### Omniglot
-* Change directory to `./filelists/omniglot`
-* run `source ./download_omniglot.sh` 
-
-### Omniglot->EMNIST (cross_char)
-* Finish preparation for omniglot first
-* Change directory to `./filelists/emnist`
-* run `source ./download_emnist.sh`  
-
-### Self-defined setting
-* Require three data split json file: 'base.json', 'val.json', 'novel.json' for each dataset  
-* The format should follow   
-{"label_names": ["class0","class1",...], "image_names": ["filepath1","filepath2",...],"image_labels":[l1,l2,l3,...]}  
-See test.json for reference
-* Put these file in the same folder and change data_dir['DATASETNAME'] in configs.py to the folder path  
 
 ## Train
 Run
 ```python ./train.py --dataset [DATASETNAME] --model [BACKBONENAME] --method [METHODNAME] [--OPTIONARG]```
 
-For example, run `python ./train.py --dataset miniImagenet --model Conv4 --method baseline --train_aug`  
+For example, In our training, we run `sudo python3 ./train.py --dataset miniImagenet --model ResNet18 --method baseline --train_aug --stop_epoch 75`  to test on ResNet18.
 Commands below follow this example, and please refer to io_utils.py for additional options.
 
 ## Save features
-Save the extracted feature before the classifaction layer to increase test speed. This is not applicable to MAML, but are required for other methods.
+Save the extracted feature before the classifaction layer to increase test speed. 
 Run
-```python ./save_features.py --dataset miniImagenet --model Conv4 --method baseline --train_aug```
+```python ./save_features.py --dataset miniImagenet --model ResNet18 --method baseline --train_aug --acc 30```
+You need to specify acc to save models by training epochs, in this case ```--acc 30``` means that we save models for 30th epochs.
+
 
 ## Test
-Run
-```python ./test.py --dataset miniImagenet --model Conv4 --method baseline --train_aug```
+Run commands like
+```sudo python3 ./test.py --dataset miniImagenet --model ResNet18 --method baseline --train_aug --split novel_30```
+In this command ```split``` is used to track which model we want to test, novel_30 means the one of 30th epoch training.
+
 
 ## Results
 * The test results will be recorded in `./record/results.txt`
-* For all the pre-computed results, please see `./record/few_shot_exp_figures.xlsx`. This will be helpful for including your own results for a fair comparison.
 
-## References
-Our testbed builds upon several existing publicly available code. Specifically, we have modified and integrated the following code into this project:
+* Here is the results for testing on miniImageNet
 
-* Framework, Backbone, Method: Matching Network
-https://github.com/facebookresearch/low-shot-shrink-hallucinate 
-* Omniglot dataset, Method: Prototypical Network
-https://github.com/jakesnell/prototypical-networks
-* Method: Relational Network
-https://github.com/floodsung/LearningToCompare_FSL
-* Method: MAML
-https://github.com/cbfinn/maml  
-https://github.com/dragen1860/MAML-Pytorch  
-https://github.com/katerakelly/pytorch-maml
+| Models|Baseline|Baseline++|
+|  ---- |  ----  | ----  |
+|ResNet10-30|73.82% +- 0.63%|72.92% +- 0.66%
+|ResNet10-50|75.48% +- 0.63%|73.02% +- 0.64%
+|ResNet10-70|75.22% +- 0.61%|73.57% +- 0.64%
+|ResNet18-30|74.48% +- 0.64%|73.21% +- 0.67%
+|ResNet18-50|73.84% +- 0.65%|74.20% +- 0.67%
+|ResNet18-70|74.86% +- 0.66%|74.44% +- 0.70%
+|ResNet34-30|72.92% +- 0.67%|71.66% +- 0.65%
+|ResNet34-50|73.21% +- 0.62%|73.35% +- 0.65%
+|ResNet34-70|74.35% +- 0.63%|73.22% +- 0.65%
 
-## FAQ
-* Q1 Why some of my reproduced results for CUB dataset are around 4~5% with you reported result? (#31, #34, #42)
-* A1 Sorry about my reported the results on the paper may run in different epochs or episodes, please see each issue for details.
+* Here is the results for testing Accuracy on cross domain, MiniImagent -> CUB
 
-* Q2 Why some of my reproduced results for mini-ImageNet dataset are around 1~2% different with your reported results? (#17, #40, #41 #43)
-* A2 Due to random initialization, each training process could lead to different accuracy. Also, each test time could lead to different accuracy.
+  
+| Models|Baseline|Baseline++|
+|  ---- |  ----  | ----  |
+|ResNet10-30|62.35% +- 0.74%|60.62% +- 0.75%
+|ResNet10-50|65.07% +- 0.74%|60.80% +- 0.71%
+|ResNet10-70|64.80% +- 0.73%|61.29% +- 0.74%
+|ResNet18-30|64.67% +- 0.75%|62.46% +- 0.78%
+|ResNet18-50|65.90% +- 0.70%|63.51% +- 0.77%
+|ResNet18-70|66.38% +- 0.71%|63.42% +- 0.75%
 
-* Q3 How do you decided the mean and the standard variation for dataset normalization? (#18, #39)
-* A3 I use the mean and standard variation from ImageNet, but you can use the ones calculated from your own dataset. 
-
-* Q4 Do you have the mini-ImageNet dataset available without downloading the whole ImageNet? (#45 #29)
-* A4 You can use the dataset here https://github.com/oscarknagg/few-shot, but you will need to modify filelists/miniImagenet/write_miniImagenet_filelist.py.
+* For other results you could reference our slides in the ```./record```.
